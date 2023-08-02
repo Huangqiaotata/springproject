@@ -1,0 +1,9 @@
+1、execution(* com.yc.service.*.*(..))   //定义在 com.yc.service 下的任何方法
+
+2、execution(* com.yc.service..*.*(..))  //定义在 com.yc.service 及其子包下所有的方法
+
+3、within
+
+4、target
+
+5、params

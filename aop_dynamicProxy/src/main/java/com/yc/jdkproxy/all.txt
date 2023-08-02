@@ -1,0 +1,20 @@
+$Proxy0
+m4   findOrder
+m3   addOrder
+
+public $Proxy0(InvocationHandler var1) throws  {
+    super(var1);  // var1 ==> JdkProxyTool
+
+    存入父类的 InvocationHandler h = JdkProxyTool对象
+}
+
+
+  protected Proxy(InvocationHandler h) {
+        Objects.requireNonNull(h);
+        this.h = h;
+  }
+
+通过上面的方法 super.h 实际上为 JdkProxyTool对象
+    super.h.invoke(this, m1, new Object[]{var1})
+        JdkProxyTool对象.invoke($Proxy对象, findOrder反射, null)
+        JdkProxyTool对象.invoke($Proxy对象, addOrder反射, new Object[1,99])
