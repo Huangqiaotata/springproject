@@ -8,7 +8,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
-// JdkProxyTool 是 InvocationHandler 的一个实例
+// CglibProxyTool 是 MethodInterceptor 的一个实例
 public class CglibProxyTool implements MethodInterceptor {
     private Object target; //目标类
 
