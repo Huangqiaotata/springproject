@@ -1,0 +1,139 @@
+2023.8.2
+1、spring test 的使用
+2、TestSuit 测试套件 将多个测试放在一起
+3、框架的大体实现
+4、项目的框架
+    父模块：pom.xml 引入所有要用的
+    子模块：添加自己特有的
+    注意保持版本一致性
+    用包来分类 需要做单元测试
+
+    druid 应用广泛
+5、spEl  spring expression language 可在字符串中运行代码
+（类似技术：JavaScript中的eval()  、 jsp EL 表达式 、 OGNL 对象导航图语言）
+
+6、自定义JDK动态代理静态
+
+7、字符串语言：
+    JavaCompile 类  classloader
+    spEl表达式
+
+8、不同的datasource 有无联接池 性能不一样
+==========================================================================
+2023.8.3
+dao层的框架
+    DbHelper : 原生的Connection
+    JDBCTemplate : DataSource -> Connection
+    Hibernate : SessionFactory -> Session -> Connection
+    JPA : EntityManager -> Connection
+
+1、最简单的方式
+@Repository
+public class JpaMovieFinder implements MovieFinder {
+
+	@PersistenceContext
+	private EntityManager entityManager;
+
+	// ...
+}
+
+2、JPA
+@Repository
+public class JpaMovieFinder implements MovieFinder {
+
+	@PersistenceContext
+	private EntityManager entityManager;
+
+	// ...
+}
+
+3、Hibernate
+@Repository
+public class HibernateMovieFinder implements MovieFinder {
+
+	private SessionFactory sessionFactory;
+
+	@Autowired
+	public void setSessionFactory(SessionFactory sessionFactory) {
+		this.sessionFactory = sessionFactory;
+	}
+
+	// ...
+}
+
+4、typical JDBC support（我们项目中使用这种）
+@Repository
+public class JdbcMovieFinder implements MovieFinder {
+
+	private JdbcTemplate jdbcTemplate;
+
+	@Autowired
+	public void init(DataSource dataSource) {
+		this.jdbcTemplate = new JdbcTemplate(dataSource);
+	}
+
+	// ...
+}
+
+5、NamedParameterJdbcTemplate  参数名字
+  SimpleJdbcInsert  插入专用的
+  SimpleJdbcCall  存储专用的
+
+6、如何使用jdbcTemplate?
+    1）、查询
+    int rowCount = this.jdbcTemplate.queryForObject("select count(*) from t_actor", Integer.class);
+
+    int countOfActorsNamedJoe = this.jdbcTemplate.queryForObject(
+    		"select count(*) from t_actor where first_name = ?", Integer.class, "Joe");
+
+    String lastName = this.jdbcTemplate.queryForObject("select last_name from t_actor where id = ?",
+    		String.class, 1212L);
+
+    Actor actor = jdbcTemplate.queryForObject(
+    		"select first_name, last_name from t_actor where id = ?",
+    		(resultSet, rowNum) -> {
+    			Actor newActor = new Actor();
+    			newActor.setFirstName(resultSet.getString("first_name"));
+    			newActor.setLastName(resultSet.getString("last_name"));
+    			return newActor;
+    		},
+    		1212L);
+
+    List<Actor> actors = this.jdbcTemplate.query(
+    		"select first_name, last_name from t_actor",
+    		(resultSet, rowNum) -> {
+    			Actor actor = new Actor();
+    			actor.setFirstName(resultSet.getString("first_name"));
+    			actor.setLastName(resultSet.getString("last_name"));
+    			return actor;
+    		});
+
+    private final RowMapper<Actor> actorRowMapper = (resultSet, rowNum) -> {
+    	Actor actor = new Actor();
+    	actor.setFirstName(resultSet.getString("first_name"));
+    	actor.setLastName(resultSet.getString("last_name"));
+    	return actor;
+    };
+    public List<Actor> findAllActors() {
+    	return this.jdbcTemplate.query("select first_name, last_name from t_actor", actorRowMapper);
+    }
+    2）、更新
+    this.jdbcTemplate.update(
+    		"insert into t_actor (first_name, last_name) values (?, ?)",
+    		"Leonor", "Watling");
+
+    this.jdbcTemplate.update(
+    		"update t_actor set last_name = ? where id = ?",
+    		"Banjo", 5276L);
+
+    this.jdbcTemplate.update(
+    		"delete from t_actor where id = ?",
+    		Long.valueOf(actorId));
+
+    3）、获取自动生成的主键列
+    KeyHolder keyHolder = new GeneratedKeyHolder();
+    jdbcTemplate.update(connection -> {
+    	PreparedStatement ps = connection.prepareStatement(INSERT_SQL, new String[] { "id" });
+    	ps.setString(1, name);
+    	return ps;
+    }, keyHolder);

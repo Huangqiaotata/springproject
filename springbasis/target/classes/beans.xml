@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+		https://www.springframework.org/schema/beans/spring-beans.xsd">
+
+   <!-- 内部存入map <String, Object>      即  map："s"  Student对象  -->
+    <bean id="s" class="com.yc.spring.Test1_IOC.Student" scope="prototype">
+        <!-- collaborators and configuration for this bean go here -->
+        <property name="id" value="1"></property>
+        <property name="name" value="hq"></property>
+        <!-- ref 引入的是另一个托管bean -->
+        <property name="address" ref="addr"></property>
+    </bean>
+
+    <bean id="addr" class="com.yc.spring.Test1_IOC.Address">
+        <property name="city" value="郴州市"></property>
+        <property name="province" value="湖南省"></property>
+    </bean>
+</beans>

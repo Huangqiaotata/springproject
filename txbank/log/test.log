@@ -1,0 +1,2 @@
+11:59:58.172 INFO  com.yc.dao.OpRecordJdbcTemplateImplTest 35 findOpRecord1 - [OpRecord(id=3, accountid=2, opmoney=200.0, optime=2023-08-03 11:59:58, opType=TRANSFER, transferid=0), OpRecord(id=2, accountid=2, opmoney=2.0, optime=2023-08-03 11:42:42, opType=DEPOSITE, transferid=3)]
+11:59:58.190 INFO  com.yc.dao.OpRecordJdbcTemplateImplTest 41 findOpRecord2 - []

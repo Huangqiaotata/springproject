@@ -1,0 +1,27 @@
+2023.8.2
+1、spring test 的使用
+2、TestSuit 测试套件 将多个测试放在一起
+3、框架的大体实现
+4、项目的框架
+    父模块：pom.xml 引入所有要用的
+    子模块：添加自己特有的
+    注意保持版本一致性
+    用包来分类 需要做单元测试
+
+    druid 应用广泛
+5、spEl  spring expression language 可在字符串中运行代码
+（类似技术：JavaScript中的eval()  、 jsp EL 表达式 、 OGNL 对象导航图语言）
+
+6、自定义JDK动态代理静态
+
+7、字符串语言：
+    JavaCompile 类  classloader
+    spEl表达式
+
+8、不同的datasource 有无联接池 性能不一样
+==========================================================================
+2023.8.3
+dao层的框架
+    DbHelper : 原生的Connection
+    JDBCTemplate : DataSource -> Connection
+    Hibernate : SessionFactory ->

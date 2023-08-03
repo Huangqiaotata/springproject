@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--namespace 命名空间  接口路径-->
+<mapper namespace="com.yc.mapper.UserMapper">
+    <!--查询  id 唯一标识 与方法名相同 resultType 返回值结果集类型 -->
+    <select id="findById" resultType="user">
+        select uid,uname,upwd,tel,pics,state from tb_user where uid = #{id}
+    </select>
+
+    <insert id="add" parameterType="user">
+        insert into tb_user values(null,#{uname},#{upwd},#{tel},#{pics},#{state})
+    </insert>
+
+</mapper>

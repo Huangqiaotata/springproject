@@ -1,0 +1,90 @@
+学会看学习文档
+
+切面类  可以有多种增强方式
+
+引入aspectj的jar包  aspectjweaver里的1.9.19
+
+在配置类上引入注解 @EnableAspectJAutoProxy 启用aspectJ支持
+
+在想要修改的类上加上注解 @Aspect
+切入表达式
+需要增加补充一个私有的方法 在方法上引入注解 @Pointcut("execution(* 包名路径..myapp.资源名称.*(..))")
+
+无接口CGLIB代理
+有接口JDK动态代理
+
+切入点 选择方法
+联接点 真正增强的方法
+
+@Component
+@Aspect
+@Order(1)  //加入优先级，控制输出顺序  1优先级高 先输出  999优先级低 后输出
+【或者实现Ordered接口，实现getOrder() 方法】
+public class A {
+
+//com.yc2 下所以方法均要调用abc()
+    @Pointcut("execution(* com.yc2..*(..))")
+    @Pointcut("execution(* com.yc2..add(..))")
+    @Pointcut("execution(* com.yc2..add*(..))")
+    private void abc(){}
+
+//该方法会被加入到 abc() 注解指定的位置 之前
+    @Before("abc()")  //前置增强
+    public void doA() {
+        System.out.println("hhhhh");
+    }
+}
+
+//通过类似于正则表达式的东西控制输出
+    @Pointcut("execution(* com..*(..))")
+    private void abc(){}
+
+    @Before("abc()") //如何获取联接点是信息 JoinPoint
+    public void showInfo(JoinPoint jp) {
+        System.out.println("联接点的信息如下：");
+        System.out.println("目标类："+jp.getTarget() + ",方法的签名："+jp.getSignature());
+        System.out.println("加了增强的方法中的参数值：");
+
+        Object[] objects = jp.getArgs();
+        if (objects!=null && objects.length>0) {
+            for (Object obj : objects) {
+                System.out.println(obj);
+            }
+        }
+    }
+
+    @AfterReturning("abc()") //正常返回时，这个增强才能起作用
+    public void show() {
+        System.out.println("returning");
+    }
+
+带参数
+    @AfterReturning(pointcut = "abc()", returning = "reVal") //正常返回时，这个增强才能起作用，并带有整型参数
+    public void show(Object reVal) {
+        System.out.println("returning,被增强的方法的返回值的结果为："+ reVal);
+    }
+
+有异常抛出时起作用
+    @AfterThrowing(pointcut = "abc()", throwing = "ex") //有异常抛出时，这个增强才能起作用
+    public void show(Exception ex) {
+        System.out.println("AfterThrowing,被增强的方法有异常抛出："+ ex);
+    }
+
+    @AfterThrowing("abc()") //有异常抛出时，这个增强才能起作用
+    public void show() {
+        System.out.println("AfterThrowing");
+    }
+
+    @After("abc()") //只要方法能执行完 不管正常或异常均可
+
+    @Around("abc()") //可以配合另一个@Around 使用 加上@Order 控制先后顺序
+    public Object show(ProceedingJoinPoint pjp) throws Throwable {
+        System.out.println("在原方法前的代码");
+        Object obj = pjp.proceed();
+        System.out.println("在原方法后的代码");
+        return obj;
+    }
+
+动态代理机制：
+1、jdk面向接口
+2、cglib面向继承
